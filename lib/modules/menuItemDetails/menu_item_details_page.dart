@@ -34,6 +34,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
   Widget build(BuildContext context) {
     final ordersController = CartController();
     final responsive = ResponsivePadding();
+    final carouselImages = widget.itemSelected.images;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -61,7 +62,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                     height: 200.0,
                     autoPlay: true,
                   ),
-                  items: widget.itemSelected.images.map((i) {
+                  items: carouselImages.map((i) {
                     return Builder(
                       builder: (BuildContext context) {
                         return Container(
