@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class AuthController {
   Future<void> loadFromLink(BuildContext context) async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     StoreModel store = StoreModel.fromMap(storesDataSet[0]);
     Navigator.pushNamed(context, "/home", arguments: store);
   }

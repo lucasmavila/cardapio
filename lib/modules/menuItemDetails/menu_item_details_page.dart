@@ -60,7 +60,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                 child: CarouselSlider(
                   options: CarouselOptions(
                     height: 200.0,
-                    autoPlay: true,
+                    autoPlay: false,
                   ),
                   items: carouselImages.map((i) {
                     return Builder(
