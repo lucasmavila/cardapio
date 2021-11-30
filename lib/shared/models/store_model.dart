@@ -6,19 +6,19 @@ import 'package:cardap/shared/models/address_model.dart';
 import 'package:cardap/shared/models/item_model.dart';
 
 class StoreModel {
-  final String id;
-  final String name;
-  final String status;
-  final AddressModel address;
-  final String? logo;
-  final List<ItemModel>? menu;
-  final String? primaryColor;
-  final String? secondaryColor;
+  String? id;
+  String? name;
+  String? status;
+  AddressModel? address;
+  String? logo;
+  List<ItemModel>? menu;
+  String? primaryColor;
+  String? secondaryColor;
   StoreModel({
-    required this.id,
-    required this.name,
-    required this.status,
-    required this.address,
+    this.id,
+    this.name,
+    this.status,
+    this.address,
     this.logo,
     this.menu,
     this.primaryColor,
@@ -52,7 +52,7 @@ class StoreModel {
       'id': id,
       'name': name,
       'status': status,
-      'address': address.toMap(),
+      'address': address?.toMap(),
       'logo': logo,
       'menu': menu?.map((x) => x.toMap()).toList(),
       'primaryColor': primaryColor,
@@ -65,7 +65,8 @@ class StoreModel {
       id: map['id'],
       name: map['name'],
       status: map['status'],
-      address: AddressModel.fromMap(map['address']),
+      address:
+          map['address'] != null ? AddressModel.fromMap(map['address']) : null,
       logo: map['logo'],
       menu: map['menu'] != null
           ? List<ItemModel>.from(map['menu']?.map((x) => ItemModel.fromMap(x)))

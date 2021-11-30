@@ -1,4 +1,4 @@
-import 'package:cardap/modules/menu/menu_item/menu_item_widget.dart';
+import 'package:cardap/modules/menu/menu_item_widget.dart';
 import 'package:cardap/shared/models/item_model.dart';
 import 'package:cardap/shared/themes/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class _MenuListWidgetState extends State<MenuListWidget> {
           itemExtent: 100,
           itemCount: widget.menu!.length,
           itemBuilder: (BuildContext context, index) {
-            return MenuItemWidget(data: widget.menu![index]);
+            return MenuItemWidget(itemData: widget.menu![index]);
           });
     }
   }

@@ -1,65 +1,83 @@
+import 'dart:async';
 import 'package:cardap/shared/models/item_model.dart';
 import 'package:cardap/shared/models/order_model.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class CartController {
-  ValueNotifier<OrderModel> orderNotifier = ValueNotifier(OrderModel());
-  OrderModel get order => orderNotifier.value;
-  set order(OrderModel value) => orderNotifier.value = value;
+class CartController extends ChangeNotifier {
+  final OrderModel cartOrder = OrderModel(items: []);
+  late ItemModel itemSelected;
 
-  CartController() {
-    getOrder();
+  Future<void> addItemToCart(BuildContext context) async {
+    cartOrder.items!.add(itemSelected); //check OrderModel
+    notifyListeners();
+    Navigator.pop(context);
   }
 
-  Future<void> getOrder() async {
-    try {
-      final instance = await SharedPreferences.getInstance();
-      final response = instance.getString("order") ?? "";
-      order = OrderModel.fromJson(response);
-    } catch (e) {
-      order = OrderModel();
+  Future<void> selectItem(BuildContext context, ItemModel item) async {
+    itemSelected = item;
+    notifyListeners();
+    Navigator.pushNamed(context, "/menuItemDetails");
+  }
+
+  void incrementAdditionalItem(int indexItemBuilder) {
+    var c = itemSelected.additionalItems![indexItemBuilder].count;
+    if (c != null) {
+      c++;
     }
+    itemSelected.additionalItems![indexItemBuilder].count = c;
+    notifyListeners();
   }
 
-  Future<void> includeOrderItem(ItemModel item) async {
-    if (order.items == null) {
-      order.items = [];
-    } else {
-      order.items!.add(item);
+  void decrementAdditionalItem(int indexItemBuilder) {
+    var c = itemSelected.additionalItems![indexItemBuilder].count;
+    if (c != null && c > 0) {
+      c--;
     }
-
-    order.orderAmount = order.items!.fold(
-        0,
-        (previousValue, element) =>
-            previousValue! +
-            (element.price +
-                (element.additionalItems != null
-                    ? element.additionalItems!.fold(
-                        0,
-                        (previousValue, element) =>
-                            element.price * element.count!)
-                    : 0)));
-    handleOrderStatus;
-    saveOrder();
+    itemSelected.additionalItems![indexItemBuilder].count = c;
+    notifyListeners();
   }
 
-  Future<void> handleOrderStatus() async {
-    order.status = "cart";
+  String getItemAmount() {
+    return (itemSelected.price +
+            (itemSelected.additionalItems?.fold(
+                    0,
+                    (previousValue, element) =>
+                        previousValue! + element.price * element.count!) ??
+                0))
+        .toString();
   }
 
-  Future<void> handleOrderDelivery() async {
-    getOrder();
-    order.deliveryAmount = 3.0;
-    order.deliveryType = "delivery";
-    saveOrder();
+  String getItemDescription() {
+    return itemSelected.description;
   }
 
-  Future<void> sendOrder() async {}
+  void changeItemObservation(String observation) {
+    itemSelected.copyWith(observation: observation);
+  }
 
-  Future<void> saveOrder() async {
-    final instance = await SharedPreferences.getInstance();
-    await instance.setString("order", order.toJson());
-    return;
+  String getItemName() {
+    return itemSelected.name;
+  }
+
+  List<String> getItemImages() {
+    return itemSelected.images;
+  }
+
+  int getgetAdditionalItemsLength() {
+    return itemSelected.additionalItems?.length ?? 0;
+  }
+
+  String getAdditionalItemCount(int indexItemBuilder) {
+    return (itemSelected.additionalItems?[indexItemBuilder].count ?? 0)
+        .toString();
+  }
+
+  String getAdditionalItemPrice(int indexItemBuilder) {
+    return (itemSelected.additionalItems?[indexItemBuilder].price ?? 0)
+        .toString();
+  }
+
+  String getAdditionalItemName(int indexItemBuilder) {
+    return (itemSelected.additionalItems?[indexItemBuilder].name ?? "");
   }
 }

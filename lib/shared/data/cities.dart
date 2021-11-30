@@ -3,7 +3,7 @@ const storesDataSet = [
     "id": "1",
     "status": "active",
     "logo":
-        "https://unsplash.com/photos/GXXYkSwndP4/download?ixid=MnwxMjA3fDB8MXxzZWFyY2h8MXx8cmVzdGF1cmFudHx8MHx8fHwxNjM3OTE2ODY1&force=true&w=200",
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200",
     "name": "Hamburgueria do José",
     "address": {
       "cep": "03043020",

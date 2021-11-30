@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 class AdditionalItemModel {
-  final String name;
-  final double price;
-  int? count = 0;
+  String name;
+  double price;
+  int? count;
   AdditionalItemModel({
     required this.name,
     required this.price,
@@ -34,7 +34,7 @@ class AdditionalItemModel {
     return AdditionalItemModel(
       name: map['name'],
       price: map['price'],
-      count: map['count'] != null ? map['count'] : null,
+      count: map['count'] ?? 0,
     );
   }
 

@@ -7,8 +7,8 @@ import 'package:cardap/shared/models/item_model.dart';
 
 class OrderModel {
   String? status;
-  List<ItemModel>? items;
   double? orderAmount;
+  List<ItemModel>? items;
   AddressModel? deliveryAddress;
   double? deliveryAmount;
   String? deliveryType;
@@ -55,7 +55,7 @@ class OrderModel {
       status: map['status'],
       items: map['items'] != null
           ? List<ItemModel>.from(map['items']?.map((x) => ItemModel.fromMap(x)))
-          : null,
+          : <ItemModel>[],
       orderAmount: map['orderAmount'],
       deliveryAddress: map['deliveryAddress'] != null
           ? AddressModel.fromMap(map['deliveryAddress'])

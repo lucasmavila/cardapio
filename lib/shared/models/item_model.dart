@@ -10,7 +10,7 @@ class ItemModel {
   final int mainPhoto;
   final double price;
   final List<String> images;
-  final List<AdditionalItemModel>? additionalItems;
+  List<AdditionalItemModel>? additionalItems;
   String? observation;
   ItemModel({
     required this.name,
@@ -21,6 +21,8 @@ class ItemModel {
     this.additionalItems,
     this.observation,
   });
+
+  get length => null;
 
   ItemModel copyWith({
     String? name,

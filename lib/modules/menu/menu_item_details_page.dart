@@ -1,19 +1,15 @@
 import 'package:cardap/modules/cart/cart_controller.dart';
 import 'package:cardap/shared/models/item_model.dart';
-import 'package:cardap/shared/models/order_model.dart';
 import 'package:cardap/shared/themes/app_colors.dart';
 import 'package:cardap/shared/themes/app_text_styles.dart';
 import 'package:cardap/shared/themes/responsive_padding.dart';
 import 'package:cardap/shared/widgets/confirm_button/confirm_button_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class MenuItemDetailsPage extends StatefulWidget {
-  final ItemModel itemSelected;
-  const MenuItemDetailsPage({Key? key, required this.itemSelected})
-      : super(key: key);
+  const MenuItemDetailsPage({Key? key}) : super(key: key);
 
   @override
   _MenuItemDetailsPageState createState() => _MenuItemDetailsPageState();
@@ -21,26 +17,17 @@ class MenuItemDetailsPage extends StatefulWidget {
 
 class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
   @override
-  void initState() {
-    super.initState();
-    if (widget.itemSelected.additionalItems != null) {
-      for (var element in widget.itemSelected.additionalItems!) {
-        element.count = 0;
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final ordersController = CartController();
     final responsive = ResponsivePadding();
-    final carouselImages = widget.itemSelected.images;
+    final cartController = context.watch<CartController>();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         toolbarHeight: 80,
         centerTitle: true,
-        title: Text(widget.itemSelected.name, style: AppTextStyles.mediumTitle),
+        title: Text(cartController.getItemName(),
+            style: AppTextStyles.mediumTitle),
         leading: GestureDetector(
           child: const Icon(Icons.arrow_back_rounded, size: 30),
           onTap: () {
@@ -62,7 +49,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                     height: 200.0,
                     autoPlay: false,
                   ),
-                  items: carouselImages.map((i) {
+                  items: cartController.getItemImages().map((image) {
                     return Builder(
                       builder: (BuildContext context) {
                         return Container(
@@ -72,7 +59,8 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                               //border: Border.all(width: 1),
                               borderRadius: BorderRadius.circular(10),
                               image: DecorationImage(
-                                  image: NetworkImage(i), fit: BoxFit.cover)),
+                                  image: NetworkImage(image),
+                                  fit: BoxFit.cover)),
                         );
                       },
                     );
@@ -82,7 +70,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 30, bottom: 10),
                 child: Text(
-                  widget.itemSelected.description,
+                  cartController.getItemDescription(),
                   style: AppTextStyles.body,
                 ),
               ),
@@ -90,7 +78,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Text("Extras", style: AppTextStyles.smallTitle),
               ),
-              widget.itemSelected.additionalItems == null
+              cartController.getgetAdditionalItemsLength() == 0
                   ? const Text("-")
                   : Container(
                       height: 250,
@@ -103,7 +91,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemCount:
-                              widget.itemSelected.additionalItems!.length,
+                              cartController.getgetAdditionalItemsLength(),
                           itemBuilder:
                               (BuildContext context, indexItemBuilder) {
                             return Padding(
@@ -115,10 +103,8 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 20),
                                     child: Text(
-                                      widget
-                                          .itemSelected
-                                          .additionalItems![indexItemBuilder]
-                                          .name,
+                                      cartController.getAdditionalItemName(
+                                          indexItemBuilder),
                                       style: AppTextStyles.body,
                                     ),
                                   ),
@@ -129,60 +115,29 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                                           text: "R\$ ",
                                           style: AppTextStyles.littlePrice),
                                       TextSpan(
-                                          text: widget
-                                              .itemSelected
-                                              .additionalItems![
-                                                  indexItemBuilder]
-                                              .price
-                                              .toString(),
+                                          text: cartController
+                                              .getAdditionalItemPrice(
+                                                  indexItemBuilder),
                                           style: AppTextStyles.littlePrice),
                                     ])),
                                     IconButton(
                                         onPressed: () {
-                                          setState(() {
-                                            widget
-                                                .itemSelected
-                                                .additionalItems![
-                                                    indexItemBuilder]
-                                                .count = widget
-                                                    .itemSelected
-                                                    .additionalItems![
-                                                        indexItemBuilder]
-                                                    .count! +
-                                                1;
-                                          });
+                                          cartController
+                                              .incrementAdditionalItem(
+                                                  indexItemBuilder);
                                         },
                                         color: AppColors.primary,
                                         icon: const Icon(Icons.control_point)),
                                     Text(
-                                        widget
-                                            .itemSelected
-                                            .additionalItems![indexItemBuilder]
-                                            .count
-                                            .toString(),
+                                        cartController.getAdditionalItemCount(
+                                            indexItemBuilder),
                                         style: AppTextStyles.body),
                                     IconButton(
                                         color: AppColors.primary,
                                         onPressed: () {
-                                          setState(() {
-                                            if (widget
-                                                    .itemSelected
-                                                    .additionalItems![
-                                                        indexItemBuilder]
-                                                    .count !=
-                                                0) {
-                                              widget
-                                                  .itemSelected
-                                                  .additionalItems![
-                                                      indexItemBuilder]
-                                                  .count = widget
-                                                      .itemSelected
-                                                      .additionalItems![
-                                                          indexItemBuilder]
-                                                      .count! -
-                                                  1;
-                                            }
-                                          });
+                                          cartController
+                                              .decrementAdditionalItem(
+                                                  indexItemBuilder);
                                         },
                                         icon: const Icon(
                                             Icons.remove_circle_outline))
@@ -199,7 +154,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                 maxLines: 2,
                 maxLength: 100,
                 onChanged: (value) {
-                  widget.itemSelected.copyWith(description: value);
+                  cartController.changeItemObservation(value);
                 },
                 decoration: InputDecoration(
                   hintText: "Exemplo: retirar a cebola",
@@ -221,17 +176,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                         text: TextSpan(children: <TextSpan>[
                       TextSpan(text: "R\$ ", style: AppTextStyles.price),
                       TextSpan(
-                          text: (widget.itemSelected.price +
-                                  (widget.itemSelected.additionalItems != null
-                                      ? widget.itemSelected.additionalItems!
-                                          .fold(
-                                              0,
-                                              (previousValue, element) =>
-                                                  previousValue +
-                                                  element.price *
-                                                      element.count!)
-                                      : 0))
-                              .toString(),
+                          text: cartController.getItemAmount(),
                           style: AppTextStyles.price),
                     ])),
                   ],
@@ -240,8 +185,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
               ConfirmButtonWidget(
                   label: "Adicionar ao carrinho",
                   onPressed: () async {
-                    ordersController.includeOrderItem(widget.itemSelected);
-                    Navigator.pop(context);
+                    cartController.addItemToCart(context);
                   },
                   readyToPress: true)
             ],

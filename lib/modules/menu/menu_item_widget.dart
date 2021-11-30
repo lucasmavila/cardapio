@@ -1,13 +1,15 @@
+import 'package:cardap/modules/cart/cart_controller.dart';
 import 'package:cardap/shared/models/item_model.dart';
 import 'package:cardap/shared/themes/app_text_styles.dart';
 import 'package:cardap/shared/themes/responsive_padding.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MenuItemWidget extends StatefulWidget {
-  final ItemModel data;
+  final ItemModel itemData;
   const MenuItemWidget({
     Key? key,
-    required this.data,
+    required this.itemData,
   }) : super(key: key);
 
   @override
@@ -17,6 +19,7 @@ class MenuItemWidget extends StatefulWidget {
 class _MenuItemWidgetState extends State<MenuItemWidget> {
   @override
   Widget build(BuildContext context) {
+    final cartController = context.read<CartController>();
     final responsive = ResponsivePadding();
 
     return Padding(
@@ -27,8 +30,7 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
             enableFeedback: true,
             enabled: true,
             onTap: () {
-              Navigator.pushNamed(context, "/menuItemDetails",
-                  arguments: widget.data);
+              cartController.selectItem(context, widget.itemData);
             },
             leading: Container(
               height: 70,
@@ -38,18 +40,18 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
                   borderRadius: BorderRadius.circular(5),
                   image: DecorationImage(
                       image: NetworkImage(
-                          widget.data.images[widget.data.mainPhoto]))),
+                          widget.itemData.images[widget.itemData.mainPhoto]))),
             ),
             title: Text.rich(TextSpan(
-              text: widget.data.name,
+              text: widget.itemData.name,
               style: AppTextStyles.smallTitle,
             )),
             subtitle: Text(
-              widget.data.description,
+              widget.itemData.description,
               style: AppTextStyles.description,
             ),
-            trailing:
-                Text(widget.data.price.toString(), style: AppTextStyles.price)),
+            trailing: Text(widget.itemData.price.toString(),
+                style: AppTextStyles.price)),
       ),
     );
   }

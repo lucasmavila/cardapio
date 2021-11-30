@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:cardap/modules/menu/menu_item/menu_list_widget.dart';
-import 'package:cardap/modules/cart/cart_controller.dart';
+import 'package:cardap/modules/menu/menu_list_widget.dart';
 import 'package:cardap/shared/models/item_model.dart';
 import 'package:cardap/shared/widgets/header/header_widget.dart';
 import 'package:flutter/material.dart';
