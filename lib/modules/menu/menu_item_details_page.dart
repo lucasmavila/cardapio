@@ -78,7 +78,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Text("Extras", style: AppTextStyles.smallTitle),
               ),
-              cartController.getgetAdditionalItemsLength() == 0
+              cartController.getAdditionalsItemLength() == 0
                   ? const Text("-")
                   : Container(
                       height: 250,
@@ -90,8 +90,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount:
-                              cartController.getgetAdditionalItemsLength(),
+                          itemCount: cartController.getAdditionalsItemLength(),
                           itemBuilder:
                               (BuildContext context, indexItemBuilder) {
                             return Padding(

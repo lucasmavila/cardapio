@@ -4,42 +4,72 @@ import 'package:cardap/shared/models/order_model.dart';
 import 'package:flutter/material.dart';
 
 class CartController extends ChangeNotifier {
-  final OrderModel cartOrder = OrderModel(items: []);
-  late ItemModel itemSelected;
-
-  Future<void> addItemToCart(BuildContext context) async {
-    cartOrder.items!.add(itemSelected); //check OrderModel
-    notifyListeners();
-    Navigator.pop(context);
-  }
+  final OrderModel _cartOrder = OrderModel(items: []);
+  late ItemModel _itemSelected;
 
   Future<void> selectItem(BuildContext context, ItemModel item) async {
-    itemSelected = item;
+    _itemSelected = item;
     notifyListeners();
     Navigator.pushNamed(context, "/menuItemDetails");
   }
 
+  //MENU ITEM SELECTED METHODS
+
+  String getItemDescription() {
+    return _itemSelected.description;
+  }
+
+  String getItemName() {
+    return _itemSelected.name;
+  }
+
+  List<String> getItemImages() {
+    return _itemSelected.images;
+  }
+
+  int getAdditionalsItemLength() {
+    return _itemSelected.additionalItems?.length ?? 0;
+  }
+
+  String getAdditionalItemCount(int indexItemBuilder) {
+    return (_itemSelected.additionalItems?[indexItemBuilder].count ?? 0)
+        .toString();
+  }
+
+  String getAdditionalItemPrice(int indexItemBuilder) {
+    return (_itemSelected.additionalItems?[indexItemBuilder].price ?? 0)
+        .toString();
+  }
+
+  String getAdditionalItemName(int indexItemBuilder) {
+    return (_itemSelected.additionalItems?[indexItemBuilder].name ?? "");
+  }
+
   void incrementAdditionalItem(int indexItemBuilder) {
-    var c = itemSelected.additionalItems![indexItemBuilder].count;
+    var c = _itemSelected.additionalItems![indexItemBuilder].count;
     if (c != null) {
       c++;
     }
-    itemSelected.additionalItems![indexItemBuilder].count = c;
+    _itemSelected.additionalItems![indexItemBuilder].count = c;
     notifyListeners();
   }
 
   void decrementAdditionalItem(int indexItemBuilder) {
-    var c = itemSelected.additionalItems![indexItemBuilder].count;
+    var c = _itemSelected.additionalItems![indexItemBuilder].count;
     if (c != null && c > 0) {
       c--;
     }
-    itemSelected.additionalItems![indexItemBuilder].count = c;
+    _itemSelected.additionalItems![indexItemBuilder].count = c;
     notifyListeners();
   }
 
+  void changeItemObservation(String observation) {
+    _itemSelected.copyWith(observation: observation);
+  }
+
   String getItemAmount() {
-    return (itemSelected.price +
-            (itemSelected.additionalItems?.fold(
+    return (_itemSelected.price +
+            (_itemSelected.additionalItems?.fold(
                     0,
                     (previousValue, element) =>
                         previousValue! + element.price * element.count!) ??
@@ -47,37 +77,45 @@ class CartController extends ChangeNotifier {
         .toString();
   }
 
-  String getItemDescription() {
-    return itemSelected.description;
+  Future<void> addItemToCart(BuildContext context) async {
+    _cartOrder.items!.add(_itemSelected); //check OrderModel
+    notifyListeners();
+    Navigator.pop(context);
   }
 
-  void changeItemObservation(String observation) {
-    itemSelected.copyWith(observation: observation);
+  //ITEMS SAVED IN THE CART - METHODS
+  int getSavedItemsLength() {
+    return _cartOrder.items?.length ?? 0;
   }
 
-  String getItemName() {
-    return itemSelected.name;
+  String getCartItemPhoto(int indexItem) {
+    int mainPhoto = _cartOrder.items?[indexItem].mainPhoto ?? 0;
+    return _cartOrder.items?[indexItem].images[mainPhoto] ?? "";
   }
 
-  List<String> getItemImages() {
-    return itemSelected.images;
+  String getCartItemName(int indexItem) {
+    return _cartOrder.items?[indexItem].name ?? "";
   }
 
-  int getgetAdditionalItemsLength() {
-    return itemSelected.additionalItems?.length ?? 0;
-  }
-
-  String getAdditionalItemCount(int indexItemBuilder) {
-    return (itemSelected.additionalItems?[indexItemBuilder].count ?? 0)
+  String getCartItemAmount(int indexItem) {
+    ItemModel item = _cartOrder.items![indexItem];
+    return (item.price +
+            (item.additionalItems?.fold(
+                    0,
+                    (previousValue, element) =>
+                        previousValue! + element.price * element.count!) ??
+                0))
         .toString();
   }
 
-  String getAdditionalItemPrice(int indexItemBuilder) {
-    return (itemSelected.additionalItems?[indexItemBuilder].price ?? 0)
-        .toString();
-  }
-
-  String getAdditionalItemName(int indexItemBuilder) {
-    return (itemSelected.additionalItems?[indexItemBuilder].name ?? "");
+  String getCartItemAdditionalItems(int indexItem) {
+    var additionalItems = _cartOrder.items?[indexItem].additionalItems;
+    List<String> additionalItemsString = [];
+    additionalItems?.forEach((element) {
+      if (element.count! > 0) {
+        additionalItemsString.add('${element.count} ${element.name}');
+      }
+    });
+    return additionalItemsString.join(' | ');
   }
 }
