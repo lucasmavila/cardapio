@@ -25,7 +25,7 @@ class _CartListWidgetState extends State<CartListWidget> {
       return ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          itemExtent: 100,
+          itemExtent: 80,
           itemCount: cartController.getSavedItemsLength(),
           itemBuilder: (BuildContext context, index) {
             return CartItemWidget(itemSelected: index);

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:cardap/modules/cart/cart_controller.dart';
 import 'package:cardap/modules/cart/cart_page.dart';
 import 'package:cardap/modules/account/account_page.dart';
 import 'package:cardap/modules/menu/menu_page.dart';
@@ -24,7 +25,6 @@ class _HomePageState extends State<HomePage> {
   int _selectedPageIndex = 0;
   bool logged = false;
   late final StoreController storeController;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final cartController = context.watch<CartController>();
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: PreferredSize(
@@ -70,7 +71,34 @@ class _HomePageState extends State<HomePage> {
             label: "Cardápio",
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_rounded), label: "Carrinho"),
+              icon: cartController.getSavedItemsLength() == 0
+                  ? Icon(Icons.shopping_cart_rounded)
+                  : Stack(
+                      children: <Widget>[
+                        Icon(Icons.shopping_cart_rounded),
+                        Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: EdgeInsets.all(1),
+                              decoration: BoxDecoration(
+                                  color: Colors.redAccent,
+                                  borderRadius: BorderRadius.circular(6)),
+                              constraints:
+                                  BoxConstraints(minHeight: 12, minWidth: 12),
+                              child: Text(
+                                  cartController
+                                      .getSavedItemsLength()
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                  textAlign: TextAlign.center),
+                            ))
+                      ],
+                    ),
+              label: "Carrinho"),
           BottomNavigationBarItem(
               icon: Icon(Icons.all_inbox_rounded), label: "Pedidos"),
           BottomNavigationBarItem(

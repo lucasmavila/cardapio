@@ -7,8 +7,8 @@ const storesDataSet = [
     "name": "Hamburgueria do José",
     "address": {
       "cep": "03043020",
-      "state": "MG",
-      "city": "Manhuaçu",
+      "state": "SP",
+      "city": "São Paulo",
       "number": 123
     },
     "primaryColor": null,

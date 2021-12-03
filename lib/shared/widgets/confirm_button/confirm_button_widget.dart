@@ -16,18 +16,17 @@ class ConfirmButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsivePadding();
     return Padding(
       padding: const EdgeInsets.only(top: 20),
       child: Container(
-        padding: responsive.getPadding(context),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         height: 56,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
             color: readyToPress ? AppColors.primary : AppColors.stroke,
             borderRadius: BorderRadius.circular(10)),
         child: TextButton(
-            onPressed: onPressed,
+            onPressed: readyToPress ? onPressed : null,
             child: Text(
               label,
               style: AppTextStyles.buttonWhite,

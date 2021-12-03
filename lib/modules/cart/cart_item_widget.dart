@@ -1,5 +1,6 @@
 import 'package:cardap/modules/cart/cart_controller.dart';
 import 'package:cardap/shared/models/item_model.dart';
+import 'package:cardap/shared/themes/app_colors.dart';
 import 'package:cardap/shared/themes/app_text_styles.dart';
 import 'package:cardap/shared/themes/responsive_padding.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class CartItemWidget extends StatefulWidget {
 class _CartItemWidgetState extends State<CartItemWidget> {
   @override
   Widget build(BuildContext context) {
-    final cartController = context.read<CartController>();
+    final cartController = context.watch<CartController>();
     final responsive = ResponsivePadding();
 
     return Padding(
@@ -28,7 +29,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
         child: ListTile(
             horizontalTitleGap: 15,
             enableFeedback: true,
-            enabled: true,
+            enabled: false,
             onTap: () {
               cartController.getCartItemAdditionalItems(widget.itemSelected);
             },
@@ -42,15 +43,29 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                       image: NetworkImage(cartController
                           .getCartItemPhoto(widget.itemSelected)))),
             ),
-            title: Text.rich(TextSpan(
-              text: cartController.getCartItemName(widget.itemSelected),
-              style: AppTextStyles.smallTitle,
-            )),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text.rich(TextSpan(
+                  text: cartController.getCartItemName(widget.itemSelected),
+                  style: AppTextStyles.smallTitle,
+                )),
+                Text(cartController.getCartItemAmount(widget.itemSelected),
+                    style: AppTextStyles.price),
+              ],
+            ),
             subtitle: Text("Adicionais: " +
                 cartController.getCartItemAdditionalItems(widget.itemSelected)),
-            trailing: Text(
-                cartController.getCartItemAmount(widget.itemSelected),
-                style: AppTextStyles.price)),
+            trailing: IconButton(
+              onPressed: () {
+                cartController.removeCartItem(widget.itemSelected);
+              },
+              icon: Icon(
+                Icons.remove_circle_outline,
+                color: AppColors.primary,
+                size: 20,
+              ),
+            )),
       ),
     );
   }

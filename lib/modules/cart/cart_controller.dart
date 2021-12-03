@@ -118,4 +118,28 @@ class CartController extends ChangeNotifier {
     });
     return additionalItemsString.join(' | ');
   }
+
+  void removeCartItem(int indexItem) {
+    _cartOrder.items?.removeAt(indexItem);
+    notifyListeners();
+  }
+
+  String getCartDeliveryTax() {
+    _cartOrder.deliveryAmount = 3.0;
+    return _cartOrder.deliveryAmount.toString();
+  }
+
+  String getCartTotalAmount() {
+    List<ItemModel> items = _cartOrder.items ?? [];
+    double totalAmount = 5; //DeliveryTax
+    for (var element in items) {
+      totalAmount += (element.price +
+          (element.additionalItems?.fold(
+                  0,
+                  (previousValue, element) =>
+                      previousValue! + element.price * element.count!) ??
+              0));
+    }
+    return totalAmount.toString();
+  }
 }
