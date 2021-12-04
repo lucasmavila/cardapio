@@ -24,13 +24,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedPageIndex = 0;
   bool logged = false;
-  late final StoreController storeController;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    storeController = context.read<StoreController>();
-  }
 
   void _handlePageSelection(int index) {
     setState(() {
@@ -47,7 +40,7 @@ class _HomePageState extends State<HomePage> {
           preferredSize: const Size.fromHeight(120),
           child: Padding(
               padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-              child: AppBarHeader(store: storeController.store))),
+              child: AppBarHeader())),
       body: [
         MenuPage(),
         CartPage(),

@@ -9,8 +9,6 @@ import 'package:cardap/modules/menu/menu_item_details_page.dart';
 import 'package:cardap/modules/orders/orders_page.dart';
 import 'package:cardap/modules/splash/splash_page.dart';
 import 'package:cardap/shared/auth/store_controller.dart';
-import 'package:cardap/shared/models/item_model.dart';
-import 'package:cardap/shared/models/store_model.dart';
 import 'package:cardap/shared/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +21,7 @@ class AppWidget extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CartController()),
-        ChangeNotifierProvider(create: (_) => StoreController())
+        ChangeNotifierProvider(create: (_) => StoreController(context))
       ],
       child: MaterialApp(
         title: "Cardap",

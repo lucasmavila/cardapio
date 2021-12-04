@@ -1,11 +1,13 @@
+import 'package:cardap/shared/auth/store_controller.dart';
+import 'package:cardap/shared/models/foodcamp/food_camp_store_model.dart';
 import 'package:cardap/shared/models/store_model.dart';
 import 'package:cardap/shared/themes/app_colors.dart';
 import 'package:cardap/shared/themes/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppBarHeader extends StatefulWidget {
-  final StoreModel store;
-  const AppBarHeader({Key? key, required this.store}) : super(key: key);
+  const AppBarHeader({Key? key}) : super(key: key);
 
   @override
   State<AppBarHeader> createState() => _AppBarHeaderState();
@@ -14,6 +16,7 @@ class AppBarHeader extends StatefulWidget {
 class _AppBarHeaderState extends State<AppBarHeader> {
   @override
   Widget build(BuildContext context) {
+    final storeController = context.read<StoreController>();
     return AppBar(
         backgroundColor: AppColors.background,
         actionsIconTheme: const IconThemeData.fallback(),
@@ -23,22 +26,17 @@ class _AppBarHeaderState extends State<AppBarHeader> {
         toolbarHeight: 80,
         leading: Container(
           decoration: BoxDecoration(
-              color: Colors.black87,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(5),
               image: DecorationImage(
-                  image: widget.store.logo != null
-                      ? NetworkImage(widget.store.logo!)
-                      : const NetworkImage(
-                          "https://www.google.com.br/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"))),
+                  image: NetworkImage(storeController.getStoreLogo()))),
         ),
         title: Column(
           children: [
-            Text(widget.store.name ?? "",
+            Text(storeController.getStoreName(),
                 style: AppTextStyles.mediumTitle, textAlign: TextAlign.left),
-            Text(
-                "${widget.store.address!.city}, ${widget.store.address!.state}",
-                style: AppTextStyles.description,
-                textAlign: TextAlign.left)
+            Text(storeController.getStoreSubtitle(),
+                style: AppTextStyles.description, textAlign: TextAlign.left)
           ],
         ),
         centerTitle: false);
