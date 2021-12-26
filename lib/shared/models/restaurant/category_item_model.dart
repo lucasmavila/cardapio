@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:cardap/shared/models/restaurant/extra_item_model.dart';
+
 class CategoryItemModel {
   final String productId;
   final String productImg;
@@ -9,6 +11,8 @@ class CategoryItemModel {
   final String productPrice;
   final String productDescription;
   final int productNumber;
+  List<ExtraItemModel>? productExtraItems;
+
   CategoryItemModel({
     required this.productId,
     required this.productImg,
@@ -16,6 +20,7 @@ class CategoryItemModel {
     required this.productPrice,
     required this.productDescription,
     required this.productNumber,
+    this.productExtraItems,
   });
 
   CategoryItemModel copyWith({
@@ -25,6 +30,7 @@ class CategoryItemModel {
     String? productPrice,
     String? productDescription,
     int? productNumber,
+    List<ExtraItemModel>? productExtraItems,
   }) {
     return CategoryItemModel(
       productId: productId ?? this.productId,
@@ -33,6 +39,7 @@ class CategoryItemModel {
       productPrice: productPrice ?? this.productPrice,
       productDescription: productDescription ?? this.productDescription,
       productNumber: productNumber ?? this.productNumber,
+      productExtraItems: productExtraItems ?? this.productExtraItems,
     );
   }
 
@@ -44,17 +51,22 @@ class CategoryItemModel {
       'productPrice': productPrice,
       'productDescription': productDescription,
       'productNumber': productNumber,
+      'productExtraItems': productExtraItems?.map((x) => x.toMap()).toList(),
     };
   }
 
   factory CategoryItemModel.fromMap(Map<String, dynamic> map) {
     return CategoryItemModel(
-      productId: map['productId'],
-      productImg: map['productImg'],
-      productName: map['productName'],
-      productPrice: map['productPrice'],
-      productDescription: map['productDescription'],
-      productNumber: map['productNumber'],
+      productId: map['productId'] ?? '',
+      productImg: map['productImg'] ?? '',
+      productName: map['productName'] ?? '',
+      productPrice: map['productPrice'] ?? '',
+      productDescription: map['productDescription'] ?? '',
+      productNumber: map['productNumber']?.toInt() ?? 0,
+      productExtraItems: map['productExtraItems'] != null
+          ? List<ExtraItemModel>.from(
+              map['productExtraItems']?.map((x) => ExtraItemModel.fromMap(x)))
+          : null,
     );
   }
 
@@ -65,7 +77,7 @@ class CategoryItemModel {
 
   @override
   String toString() {
-    return 'CategoryItemModel(productId: $productId, productImg: $productImg, productName: $productName, productPrice: $productPrice, productDescription: $productDescription, productNumber: $productNumber)';
+    return 'CategoryItemModel(productId: $productId, productImg: $productImg, productName: $productName, productPrice: $productPrice, productDescription: $productDescription, productNumber: $productNumber, productExtraItems: $productExtraItems)';
   }
 
   @override
@@ -78,7 +90,8 @@ class CategoryItemModel {
         other.productName == productName &&
         other.productPrice == productPrice &&
         other.productDescription == productDescription &&
-        other.productNumber == productNumber;
+        other.productNumber == productNumber &&
+        listEquals(other.productExtraItems, productExtraItems);
   }
 
   @override
@@ -88,6 +101,7 @@ class CategoryItemModel {
         productName.hashCode ^
         productPrice.hashCode ^
         productDescription.hashCode ^
-        productNumber.hashCode;
+        productNumber.hashCode ^
+        productExtraItems.hashCode;
   }
 }

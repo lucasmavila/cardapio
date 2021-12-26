@@ -1,21 +1,19 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-
-import 'package:cardap/shared/models/address_model.dart';
-import 'package:cardap/shared/models/item_model.dart';
+import 'package:cardap/shared/models/restaurant/category_item_model.dart';
+import 'package:cardap/shared/models/store_models/address_model.dart';
 
 class OrderModel {
   String? status;
   double? orderAmount;
-  List<ItemModel>? items;
+  List<CategoryItemModel>? items;
   AddressModel? deliveryAddress;
   double? deliveryAmount;
   String? deliveryType;
   OrderModel({
     this.status,
-    this.items,
     this.orderAmount,
+    this.items,
     this.deliveryAddress,
     this.deliveryAmount,
     this.deliveryType,
@@ -23,16 +21,16 @@ class OrderModel {
 
   OrderModel copyWith({
     String? status,
-    List<ItemModel>? items,
     double? orderAmount,
+    List<CategoryItemModel>? items,
     AddressModel? deliveryAddress,
     double? deliveryAmount,
     String? deliveryType,
   }) {
     return OrderModel(
       status: status ?? this.status,
-      items: items ?? this.items,
       orderAmount: orderAmount ?? this.orderAmount,
+      items: items ?? this.items,
       deliveryAddress: deliveryAddress ?? this.deliveryAddress,
       deliveryAmount: deliveryAmount ?? this.deliveryAmount,
       deliveryType: deliveryType ?? this.deliveryType,
@@ -42,8 +40,8 @@ class OrderModel {
   Map<String, dynamic> toMap() {
     return {
       'status': status,
-      'items': items?.map((x) => x.toMap()).toList(),
       'orderAmount': orderAmount,
+      'items': items?.map((x) => x.toMap()).toList(),
       'deliveryAddress': deliveryAddress?.toMap(),
       'deliveryAmount': deliveryAmount,
       'deliveryType': deliveryType,
@@ -53,14 +51,15 @@ class OrderModel {
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
       status: map['status'],
+      orderAmount: map['orderAmount']?.toDouble(),
       items: map['items'] != null
-          ? List<ItemModel>.from(map['items']?.map((x) => ItemModel.fromMap(x)))
-          : <ItemModel>[],
-      orderAmount: map['orderAmount'],
+          ? List<CategoryItemModel>.from(
+              map['items']?.map((x) => CategoryItemModel.fromMap(x)))
+          : null,
       deliveryAddress: map['deliveryAddress'] != null
           ? AddressModel.fromMap(map['deliveryAddress'])
           : null,
-      deliveryAmount: map['deliveryAmount'],
+      deliveryAmount: map['deliveryAmount']?.toDouble(),
       deliveryType: map['deliveryType'],
     );
   }
@@ -72,7 +71,7 @@ class OrderModel {
 
   @override
   String toString() {
-    return 'OrderModel(status: $status, items: $items, orderAmount: $orderAmount, deliveryAddress: $deliveryAddress, deliveryAmount: $deliveryAmount, deliveryType: $deliveryType)';
+    return 'OrderModel(status: $status, orderAmount: $orderAmount, items: $items, deliveryAddress: $deliveryAddress, deliveryAmount: $deliveryAmount, deliveryType: $deliveryType)';
   }
 
   @override
@@ -81,8 +80,8 @@ class OrderModel {
 
     return other is OrderModel &&
         other.status == status &&
-        listEquals(other.items, items) &&
         other.orderAmount == orderAmount &&
+        listEquals(other.items, items) &&
         other.deliveryAddress == deliveryAddress &&
         other.deliveryAmount == deliveryAmount &&
         other.deliveryType == deliveryType;
@@ -91,8 +90,8 @@ class OrderModel {
   @override
   int get hashCode {
     return status.hashCode ^
-        items.hashCode ^
         orderAmount.hashCode ^
+        items.hashCode ^
         deliveryAddress.hashCode ^
         deliveryAmount.hashCode ^
         deliveryType.hashCode;

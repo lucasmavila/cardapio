@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:cardap/shared/models/additional_item_model.dart';
+import 'package:cardap/shared/models/store_models/additional_item_model.dart';
 
 class ItemModel {
   final String name;

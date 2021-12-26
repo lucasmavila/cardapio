@@ -1,9 +1,11 @@
 import 'package:cardap/modules/cart/cart_controller.dart';
-import 'package:cardap/shared/auth/store_controller.dart';
-import 'package:cardap/shared/models/item_model.dart';
+import 'package:cardap/modules/restaurant/restaurant_controller.dart';
+import 'package:cardap/shared/models/restaurant/category_item_model.dart';
+import 'package:cardap/shared/models/store_models/item_model.dart';
 import 'package:cardap/shared/themes/app_text_styles.dart';
 import 'package:cardap/shared/themes/responsive_padding.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class MenuItemWidget extends StatefulWidget {
@@ -22,8 +24,7 @@ class MenuItemWidget extends StatefulWidget {
 class _MenuItemWidgetState extends State<MenuItemWidget> {
   @override
   Widget build(BuildContext context) {
-    final cartController = context.read<CartController>();
-    final storeController = context.read<StoreController>();
+    final restaurantController = Provider.of<RestaurantController>(context);
     final responsive = ResponsivePadding();
 
     return Padding(
@@ -34,7 +35,8 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
             enableFeedback: true,
             enabled: true,
             onTap: () {
-              //cartController.selectItem(context, widget.itemData);
+              context.go(
+                  '/${restaurantController.restaurantId}/menu/category/${restaurantController.getCategoryId(widget.categoryIndex)}/item/${restaurantController.getItemId(widget.categoryIndex, widget.itemIndex)}');
             },
             leading: Container(
               height: 70,
@@ -43,21 +45,21 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
                   color: Colors.black87,
                   borderRadius: BorderRadius.circular(5),
                   image: DecorationImage(
-                      image: NetworkImage(storeController.getItemImage(
+                      image: NetworkImage(restaurantController.getItemImage(
                           widget.categoryIndex, widget.itemIndex)))),
             ),
             title: Text.rich(TextSpan(
-              text: storeController.getItemName(
+              text: restaurantController.getItemName(
                   widget.categoryIndex, widget.itemIndex),
               style: AppTextStyles.smallTitle,
             )),
             subtitle: Text(
-              storeController.getItemDescription(
+              restaurantController.getItemDescription(
                   widget.categoryIndex, widget.itemIndex),
               style: AppTextStyles.description,
             ),
             trailing: Text(
-                storeController.getItemPrice(
+                restaurantController.getItemPrice(
                     widget.categoryIndex, widget.itemIndex),
                 style: AppTextStyles.price)),
       ),

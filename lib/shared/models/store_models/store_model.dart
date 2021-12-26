@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:cardap/shared/models/address_model.dart';
-import 'package:cardap/shared/models/item_model.dart';
+import 'package:cardap/shared/models/store_models/address_model.dart';
+import 'package:cardap/shared/models/store_models/item_model.dart';
 
 class StoreModel {
   String? id;

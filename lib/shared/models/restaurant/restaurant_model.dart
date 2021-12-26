@@ -2,17 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:cardap/shared/models/foodcamp/category_model.dart';
+import 'package:cardap/shared/models/restaurant/category_model.dart';
 
-class FoodCampStoreModel {
+class RestaurantModel {
   String? restaurantUrlName;
   String? restaurantName;
   String? restaurantWppNumber;
   String? restaurantImg;
-
   List<CategoryModel>? categories;
 
-  FoodCampStoreModel({
+  RestaurantModel({
     this.restaurantUrlName,
     this.restaurantName,
     this.restaurantWppNumber,
@@ -20,14 +19,14 @@ class FoodCampStoreModel {
     this.categories,
   });
 
-  FoodCampStoreModel copyWith({
+  RestaurantModel copyWith({
     String? restaurantUrlName,
     String? restaurantName,
     String? restaurantWppNumber,
     String? restaurantImg,
     List<CategoryModel>? categories,
   }) {
-    return FoodCampStoreModel(
+    return RestaurantModel(
       restaurantUrlName: restaurantUrlName ?? this.restaurantUrlName,
       restaurantName: restaurantName ?? this.restaurantName,
       restaurantWppNumber: restaurantWppNumber ?? this.restaurantWppNumber,
@@ -46,8 +45,8 @@ class FoodCampStoreModel {
     };
   }
 
-  factory FoodCampStoreModel.fromMap(Map<String, dynamic> map) {
-    return FoodCampStoreModel(
+  factory RestaurantModel.fromMap(Map<String, dynamic> map) {
+    return RestaurantModel(
       restaurantUrlName: map['restaurantUrlName'],
       restaurantName: map['restaurantName'],
       restaurantWppNumber: map['restaurantWppNumber'],
@@ -61,19 +60,19 @@ class FoodCampStoreModel {
 
   String toJson() => json.encode(toMap());
 
-  factory FoodCampStoreModel.fromJson(String source) =>
-      FoodCampStoreModel.fromMap(json.decode(source));
+  factory RestaurantModel.fromJson(String source) =>
+      RestaurantModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'FoodCampStoreModel(restaurantUrlName: $restaurantUrlName, restaurantName: $restaurantName, restaurantWppNumber: $restaurantWppNumber, restaurantImg: $restaurantImg, categories: $categories)';
+    return 'RestaurantModel(restaurantUrlName: $restaurantUrlName, restaurantName: $restaurantName, restaurantWppNumber: $restaurantWppNumber, restaurantImg: $restaurantImg, categories: $categories)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is FoodCampStoreModel &&
+    return other is RestaurantModel &&
         other.restaurantUrlName == restaurantUrlName &&
         other.restaurantName == restaurantName &&
         other.restaurantWppNumber == restaurantWppNumber &&

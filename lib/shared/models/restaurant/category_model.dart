@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-
-import 'package:cardap/shared/models/foodcamp/category_item_model.dart';
+import 'package:cardap/shared/models/restaurant/category_item_model.dart';
 
 class CategoryModel {
   final String categorieId;

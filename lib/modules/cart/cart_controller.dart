@@ -1,86 +1,89 @@
 import 'dart:async';
-import 'package:cardap/shared/models/item_model.dart';
-import 'package:cardap/shared/models/order_model.dart';
+import 'package:cardap/modules/restaurant/restaurant_controller.dart';
+import 'package:cardap/shared/models/restaurant/category_item_model.dart';
+import 'package:cardap/shared/models/restaurant/extra_item_model.dart';
+import 'package:cardap/shared/models/store_models/item_model.dart';
+import 'package:cardap/shared/models/store_models/order_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class CartController extends ChangeNotifier {
   final OrderModel _cartOrder = OrderModel(items: []);
-  late ItemModel _itemSelected;
 
-  Future<void> selectItem(BuildContext context, ItemModel item) async {
+  late CategoryItemModel _itemSelected;
+  bool get itemNotSelected => _itemSelected.productId.isEmpty;
+  List<ExtraItemModel> _itemSelectedExtrasList = [];
+  String _itemSelectedObservation = '';
+
+  selectItem(CategoryItemModel item) {
     _itemSelected = item;
-    notifyListeners();
-    Navigator.pushNamed(context, "/menuItemDetails");
   }
 
   //MENU ITEM SELECTED METHODS
 
-  String getItemDescription() {
-    return _itemSelected.description;
+  String getItemSelectedDescription() {
+    return _itemSelected.productDescription;
   }
 
-  String getItemName() {
-    return _itemSelected.name;
+  String getItemSelectedName() {
+    return _itemSelected.productName;
   }
 
-  List<String> getItemImages() {
-    return _itemSelected.images;
+  List<String> getItemSelectedImages() {
+    return [_itemSelected.productImg];
   }
 
-  int getAdditionalsItemLength() {
-    return _itemSelected.additionalItems?.length ?? 0;
+  int getItemSelectedExtrasListLength() {
+    return _itemSelected.productExtraItems?.length ?? 0;
   }
 
-  String getAdditionalItemCount(int indexItemBuilder) {
-    return (_itemSelected.additionalItems?[indexItemBuilder].count ?? 0)
-        .toString();
+  int getExtraItemSelectedCount(int indexExtraItem) {
+    String extraItemId =
+        _itemSelected.productExtraItems![indexExtraItem].extraItemId;
+    return _itemSelectedExtrasList
+        .where((element) => element.extraItemId == extraItemId)
+        .length;
   }
 
-  String getAdditionalItemPrice(int indexItemBuilder) {
-    return (_itemSelected.additionalItems?[indexItemBuilder].price ?? 0)
-        .toString();
+  double getExtraItemSelectedPrice(int indexExtraItem) {
+    return _itemSelected.productExtraItems?.elementAt(indexExtraItem).price ??
+        0;
   }
 
-  String getAdditionalItemName(int indexItemBuilder) {
-    return (_itemSelected.additionalItems?[indexItemBuilder].name ?? "");
+  String getExtraItemSelectedName(int indexExtraItem) {
+    return _itemSelected.productExtraItems?.elementAt(indexExtraItem).name ??
+        "";
   }
 
-  void incrementAdditionalItem(int indexItemBuilder) {
-    var c = _itemSelected.additionalItems![indexItemBuilder].count;
-    if (c != null) {
-      c++;
-    }
-    _itemSelected.additionalItems![indexItemBuilder].count = c;
-    notifyListeners();
+  void addExtraItemSelected(int indexExtraItem) {
+    _itemSelectedExtrasList
+        .add(_itemSelected.productExtraItems![indexExtraItem]);
   }
 
-  void decrementAdditionalItem(int indexItemBuilder) {
-    var c = _itemSelected.additionalItems![indexItemBuilder].count;
-    if (c != null && c > 0) {
-      c--;
-    }
-    _itemSelected.additionalItems![indexItemBuilder].count = c;
-    notifyListeners();
+  void removeExtraItemSelected(int indexExtraItem) {
+    String extraItemId =
+        _itemSelected.productExtraItems![indexExtraItem].extraItemId;
+
+    _itemSelectedExtrasList.remove(_itemSelectedExtrasList
+        .firstWhere((element) => element.extraItemId == extraItemId));
   }
 
-  void changeItemObservation(String observation) {
-    _itemSelected.copyWith(observation: observation);
+  void changeItemSelectedObservation(String observation) {
+    _itemSelectedObservation = observation;
   }
 
-  String getItemAmount() {
-    return (_itemSelected.price +
-            (_itemSelected.additionalItems?.fold(
-                    0,
-                    (previousValue, element) =>
-                        previousValue! + element.price * element.count!) ??
-                0))
-        .toString();
+  double getItemSelectedTotalAmount() {
+    return double.tryParse(_itemSelected.productPrice) ??
+        0 +
+            _itemSelectedExtrasList.fold(
+                0, (previousValue, element) => previousValue + (element.price));
   }
 
-  Future<void> addItemToCart(BuildContext context) async {
+  Future<void> addItemToCart() async {
+    _itemSelected.productExtraItems = _itemSelectedExtrasList;
     _cartOrder.items!.add(_itemSelected); //check OrderModel
     notifyListeners();
-    Navigator.pop(context);
   }
 
   //ITEMS SAVED IN THE CART - METHODS
@@ -89,34 +92,37 @@ class CartController extends ChangeNotifier {
   }
 
   String getCartItemPhoto(int indexItem) {
-    int mainPhoto = _cartOrder.items?[indexItem].mainPhoto ?? 0;
-    return _cartOrder.items?[indexItem].images[mainPhoto] ?? "";
+    //int mainPhoto = _cartOrder.items?[indexItem].mainPhoto ?? 0;
+    return _cartOrder.items?[indexItem].productImg ?? "";
   }
 
   String getCartItemName(int indexItem) {
-    return _cartOrder.items?[indexItem].name ?? "";
+    return _cartOrder.items?[indexItem].productName ?? "";
   }
 
-  String getCartItemAmount(int indexItem) {
-    ItemModel item = _cartOrder.items![indexItem];
-    return (item.price +
-            (item.additionalItems?.fold(
-                    0,
-                    (previousValue, element) =>
-                        previousValue! + element.price * element.count!) ??
-                0))
-        .toString();
+  double getCartItemAmount(int indexItem) {
+    CategoryItemModel item = _cartOrder.items![indexItem];
+    return (double.parse(item.productPrice) +
+        (item.productExtraItems?.fold(
+                0,
+                (previousValue, element) =>
+                    previousValue ?? 0 + element.price) ??
+            0));
   }
 
   String getCartItemAdditionalItems(int indexItem) {
-    var additionalItems = _cartOrder.items?[indexItem].additionalItems;
-    List<String> additionalItemsString = [];
-    additionalItems?.forEach((element) {
-      if (element.count! > 0) {
-        additionalItemsString.add('${element.count} ${element.name}');
-      }
-    });
-    return additionalItemsString.join(' | ');
+    var extraItems = _cartOrder.items?[indexItem].productExtraItems ?? [];
+    var distinctExtraItems = extraItems.toSet().toList();
+    List<String> extraItemsString = [];
+    for (final item in distinctExtraItems) {
+      extraItemsString.add(extraItems
+              .where((element) => element.extraItemId == item.extraItemId)
+              .length
+              .toString() +
+          'x' +
+          item.name);
+    }
+    return extraItemsString.join(' | ');
   }
 
   void removeCartItem(int indexItem) {
@@ -129,17 +135,16 @@ class CartController extends ChangeNotifier {
     return _cartOrder.deliveryAmount.toString();
   }
 
-  String getCartTotalAmount() {
-    List<ItemModel> items = _cartOrder.items ?? [];
+  double getCartTotalAmount() {
+    List<CategoryItemModel> items = _cartOrder.items ?? [];
     double totalAmount = 5; //DeliveryTax
-    for (var element in items) {
-      totalAmount += (element.price +
-          (element.additionalItems?.fold(
-                  0,
-                  (previousValue, element) =>
-                      previousValue! + element.price * element.count!) ??
-              0));
+    for (final item in items) {
+      totalAmount += (double.tryParse(item.productPrice) ??
+          0 +
+              (item.productExtraItems?.fold(0,
+                      (previousValue, item) => previousValue! + item.price) ??
+                  0));
     }
-    return totalAmount.toString();
+    return totalAmount;
   }
 }
